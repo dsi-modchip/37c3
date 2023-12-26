@@ -1,0 +1,923 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>37c3</title>
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/moon.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css">
+    <style>
+      .monospace {
+        font-family: "VCR OCD Faux", "VCR OSD Mono", "CozetteVector", monospace;
+      }
+      img.fragment.visible:not(.current-fragment):not(.r-stretch) {
+        display: none;
+      }
+      img.halfwidth {
+        width: 45%;
+      }
+      span {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      ul.check {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+      }
+      .check li {
+        padding-left: 1em;
+        text-indent: -1em;
+      }
+      .check li:before {
+        content: "✔";
+        padding-right: 5px;
+        color: #859900;
+      }
+
+      ul.rarrow {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+      }
+      .rarrow li {
+        padding-left: 1em;
+        text-indent: -1em;
+      }
+      .rarrow li:before {
+        content: "⇒";
+        padding-right: 5px;
+        color: #dc322f;
+      }
+      .secondary {
+        font-size: 24pt;
+        color: #586e75;
+        font-family: "CMU Serif", "CMU Sans Serif", "Linux Libertine", serif;
+      }
+    </style>
+  </head>
+  <body>
+<div class="reveal">
+<div class="slides">
+<section>
+  <h1>Console hacking 2023: 2008</h1>
+  <h3><a href="#">Finishing off the Nintendo DSi</a></h3>
+  <!--<p><b>PoroCYon</b>, Normmatt, stuckpixel</p>-->
+  <p>PoroCYon</p>
+</section>
+
+<section>
+  <section>
+    <h2>What are we talking about?</h2>
+    <table>
+      <thead>
+        <tr>
+          <td><center>DS</center></td>
+          <td><center>DSi</center></td>
+          <td><center>3DS</center></td>
+        </tr>
+        <tr>
+          <td width="33%"><img src="img/nds-lite-glamor.png" alt="Nintendo DS glamor shot" /></td>
+          <td width="33%" style="background-color: #073642;"><img src="img/dsi-xl-glamor.png" alt="Nintendo DSi glamor shot" /></td>
+          <td width="33%"><img src="img/3ds-new-glamor.png" alt="Nintendo 3DS glamor shot" /></td>
+        </tr>
+      </thead>
+      <tr>
+        <td><center>two GBAs and a GPU in a trenchcoat</center></td>
+        <td style="background-color: #073642;"><center>✨multimedia✨ (web browser, cameras)</center></td>
+        <td><center>Autostereoscopic 3D</center></td>
+      </tr>
+    </table>
+  </section>
+  <section>
+    <h2>NDS hacking</h2>
+    Cartridge encryption:
+    <ul>
+      <li>First Nintendo console to use cryptography</li>
+      <li>... only <b>symmetric</b> cryptography</li>
+    </ul>
+    <img class="r-stretch" src="img/ntrsymm.png" />
+  </section>
+  <section>
+    <h2>After key extraction</h2>
+    <img class="r-stretch" src="img/flashcart.jpg" />
+
+    <aside class="notes" data-markdown>
+      nocash leaked the keys
+    </aside>
+  </section>
+  <section>
+    <h2>Nintendo didn't like this</h2>
+    <p>So they used <b>public-key</b> cryptography for the DSi</p>
+
+    <aside class="notes" data-markdown>
+      flashcarts were super easy to use, and made piracy easier compared to
+      older consoles (eg GCN modchip!)
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Background</h2>
+    <p>We can't be the first ones to look into the DSi, right?</p>
+    <ul>
+      <li class="fragment">
+        <p><a href="https://scanlime.org/2009/09/dsi-ram-tracing/">scanlime's RAM tracer</a> (2009)</p>
+
+        <img alt="Photo of scanlime's RAM tracer. It shows the innards of a DSi
+        connected to an FPGA devboard with lots of ugly wiring. It somehow still
+        lives." data-src="img/scanlime-tracer.jpg" style="width:40%" />
+        <img alt="Photo of a DSi cartridge with the plastic shell removed, and
+        wires soldered to the SPI traces." data-src="img/dsisavegame.jpg" style="width:22%" />
+      </li>
+      <li class="fragment">... and nothing else happened</li>
+    </ul>
+
+    <aside class="notes" data-markdown>
+      ram tracer:
+      * snoop everything happening in external RAM
+      * dump game code
+      * savegame vulns
+      * not much else: can't get deeper into the system
+    </aside>
+  </section>
+  <section>
+    <ul>
+      <li>3DS got released (2011)</li>
+      <li class="fragment">
+        <p>... and badly hacked (2015, 2016)</p>
+        <img data-src="img/3ds-hack-pres.png" />
+      </li>
+    </ul>
+  </section>
+  <section>
+    <ul>
+      <li>
+        <p><a href="https://problemkaputt.de/unlaunch.htm">Unlaunch</a> (2018): DSi bootcode exploit</p>
+      </li>
+    </ul>
+    <span><img data-src="img/unlaunch.jpg" style="width:65%" /></span>
+    <p class="fragment">Problem solved, right?</p>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Not so fast</h2>
+    <ul>
+      <li>Unlaunch has some quirks</li>
+      <li>Unlaunch exploits the <b>second</b>-stage bootloader:
+        <ul>
+          <li>Modifies eMMC in unfun ways</li>
+          <li><p>eMMC erase-write lifetime is <b>bad</b>:</p>
+            <div class="r-stretch">
+              <span><img data-src="img/emmc-wear-1.png" class="halfwidth" />
+                <img data-src="img/emmc-wear-2_.png" class="halfwidth" /></span>
+              <img data-src="img/nand-bak.png" />
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fragment">No bootrom dumps yet :&lt;</li>
+    </ul>
+    <p class="fragment">We want the bootrom!</p>
+
+    <aside class="notes" data-markdown>
+      * unlaunch modifies system menu sounds etc
+      * write to eMMC → things go bad
+      * can't replace eMMC: annoying BGA rework + eMMC CID used in console-unique key derivation
+    </aside>
+  </section>
+  <section>
+    <h2>Secure boot strikes back</h2>
+    <p>Can't we just replace the eMMC chip?</p>
+    <ul>
+      <li class="fragment">eMMC CID (Card ID) used to derive FAT FS encryption key
+        <ul><li>And many other things</li></ul>
+      </li>
+      <li class="fragment">ConsoleID (fuses) also used as key material</li>
+    </ul>
+    <p class="fragment">eMMC replacement won't work :(</p>
+
+    <aside class="notes" data-markdown>
+      * eMMC CID is read-only
+      * eMMC + ConsoleID/fuses -&gt; paired to a console
+      * secure boot sucks
+    </aside>
+  </section>
+</section>
+
+<section>
+  <h2>Hardware</h2>
+  <img src="img/dsi-diagram.png" class="r-stretch r-frame" />
+
+  <aside class="notes" data-markdown>
+    * two ARM cores: ARM7 and ARM9
+    * ARM9 has GPU (runs game code)
+    * ARM7 has everything else (incl. IO)
+    * ARM7-private WRAM
+    * ARM9-private TCM + cache
+    * shared WRAM, PSRAM
+    * mappable NWRAM
+  </aside>
+</section>
+
+<section>
+  <h2>Boot process</h2>
+  <img src="img/bootseq-0.png" class="fragment current-visible" data-fragment-index="1" />
+  <img src="img/bootseq-1.png" class="fragment current-visible" data-fragment-index="2" />
+  <img src="img/bootseq-2.png" class="fragment current-visible" data-fragment-index="3" />
+  <img src="img/bootseq-3.png" class="fragment current-visible" data-fragment-index="4" />
+  <img src="img/bootseq-4.png" class="fragment current-visible" data-fragment-index="5" />
+  <img src="img/bootseq-5.png" class="fragment current-visible" data-fragment-index="6" />
+
+  <aside class="notes" data-markdown>
+    1. ROM loads stage2 from raw eMMC into WRAM
+    2. stage2 inits PSRAM, loads sysmenu from FatFS into PSRAM
+    3. sysmenu reads gamecart into DRAM
+    4. sysmenu applies SCFG permissions
+  </aside>
+</section>
+
+<section>
+  <section>
+    <h2>3DS TWL mode</h2>
+    <ul>
+      <li class="fragment">3DS includes <b>hardware switch</b> to enter DSi mode</li>
+      <li class="fragment">Implemented in low-level firmware</li>
+      <li class="fragment">DSi mode runs standard second-stage bootloader</li>
+    </ul>
+    <!--<p><b class="fragment">3DS hack leaks DSi second-stage bootloader!</b>
+      <ul class="fragment">
+        <li>Without having to pwn the hardware or bootrom</li>
+      </ul>
+    </p>
+    <p class="fragment">And thus, Unlaunch happened</p>-->
+  </section>
+  <section>
+    <h2>Unlaunch origin story</h2>
+    <img src="img/unlau-3ds-1_.png" class="fragment current-visible" data-fragment-index="1" />
+    <img src="img/unlau-3ds-2.png" class="fragment current-visible" data-fragment-index="2" />
+
+    <aside class="notes" data-markdown>
+      * scanlime's ram tracer can't dump stage2 (WRAM, not PSRAM)
+      * 3DS compat-mode and hacking *did* leak stage2
+      * thanks to 3DS fails we can now pwn the DSi
+    </aside>
+  </section>
+</section>
+
+<section>
+  <h2>Boot process takeaways</h2>
+  <ul>
+    <li>eMMC dead → everything fails</li>
+    <li>Second stage happens <i>after</i> eMMC signature check
+      <ul>
+        <li class="fragment">Unlaunch happens here!</li>
+        <li class="fragment">Dead eMMC → Unlaunch won't save you</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="fragment">Need <b>early</b> code execution.</p>
+</section>
+
+<section>
+  <section>
+    <h2>Finding vulnerabilities in a black box sucks</h2>
+    <p>So we need to dump these bootroms first</p>
+  </section>
+  <section>
+    <h2>Backporting a 3DS hack</h2>
+    <img data-src="img/vector-glitch-hack.jpg" />
+    <p>Extract boot ROM using fault injection</p>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Vector-glitch hack</h2>
+    <img src="img/rom-situation-0.png" class="fragment current-visible" data-fragment-index="1" />
+    <img src="img/rom-situation-1.png" class="fragment current-visible" data-fragment-index="2" />
+    <img src="img/rom-situation-2.png" class="fragment current-visible" data-fragment-index="3" />
+    <img src="img/a7-strat-1.png" class="fragment current-visible" data-fragment-index="4" />
+    <img src="img/a7-strat-2.png" class="fragment current-visible" data-fragment-index="5" />
+    <img src="img/a7-strat-3.png" class="fragment current-visible" data-fragment-index="6" />
+    <img src="img/a7-strat-4.png" class="fragment current-visible" data-fragment-index="7" />
+    <img src="img/a7-strat-5.png" class="fragment current-visible" data-fragment-index="8" />
+
+    <aside class="notes" data-markdown>
+      * exception vectors in boot ROMs: they need this
+      * but, vectors need to be configurable at runtime (otherwise useless)
+      * solution: make vectors jump to WRAM or TCM
+      * SCFG registers: disables boot ROMs (second half, first half is SWI routines)
+    </aside>
+  </section>
+</section>
+
+<section>
+  <ul class="check">
+    <li>ARM7 code execution</li>
+    <li class="fragment">In boot ROM</li>
+  </ul>
+</section>
+
+<section>
+  <section>
+    <h2>People already tried this...</h2>
+    <img data-src="img/old-attempt.png" style="width:53%" />
+    <img data-src="img/old-attempt-2.png" style="width:53%" />
+
+    <aside class="notes" data-markdown>
+      other people's setups didn't really work very well:
+      * glitching too slow
+      * decoupling caps etc are annoying
+    </aside>
+  </section>
+  <section>
+    <h2>Voltage glitching woes</h2>
+    <p>(note: this is a simplification)</p>
+    <span><img src="img/xtor-vfi-1.svg" class="fragment current-visible halfwidth" data-fragment-index="1" /></span>
+    <span><img src="img/xtor-vfi-2.svg" class="fragment current-visible halfwidth" data-fragment-index="2" /></span>
+    <span><img src="img/xtor-vfi-3.svg" class="fragment current-visible halfwidth" data-fragment-index="3" /></span>
+    <span><img src="img/xtor-vfi-4.svg" class="fragment current-visible halfwidth" data-fragment-index="4" /></span>
+    <p class="fragmet" data-fragment-index="5"></p>
+  </section>
+  <section>
+    <h2>Electromagnetic fault injection</h2>
+    <span>
+      <img data-src="img/emprobe.jpg" class="halfwidth" />
+      <img data-src="img/interconnect.png" class="halfwidth" />
+    </span>
+
+    <aside class="notes" data-markdown>
+      explain EMFI principle here
+    </aside>
+  </section>
+  <section>
+    <img src="img/customflash.jpg" class="r-stretch" />
+
+    <aside class="notes" data-markdown>
+      EMFI coil probe placed above DSi SoC
+    </aside>
+  </section>
+  <section>
+    <img data-src="img/fisetup-1.jpg" class="r-stretch" />
+
+    <aside class="notes" data-markdown>
+      wider view:
+      * target
+      * EMFI probe on XYZ stage
+      * ugly wiring mess to control the setup
+      * aluminium foil shielding
+      * PC to control the setup (not pictured)
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>ARM7 ROM unlocked</h2>
+    <p>SHA3-256:</p>
+    <p class="monospace">ccc5cce4ece3204e6ece25bdf5684004 3375ce1771fb998ed9f641ca9fe00bc1</p>
+  </section>
+  <section>
+    <h2>But...</h2>
+    <img src="img/ancast2.png" class="fragment current-visible" />
+    <p class="fragment">ARM7 ROM only contains I/O driver code, no cryptography</p>
+    <ul class="fragment rarrow"><li>We need the ARM9 boot ROM!</li></ul>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Backporting more hacks?</h2>
+    <ul>
+      <li>3DS: use one core to take over other cores</li>
+    </ul>
+    <img data-src="img/3ds-boot9-boot11.jpg" class="r-stretch" />
+    <p class="fragment"><b>Doesn't work on DSi :(</b></p>
+  </section>
+  <section>
+    <h2>Vector-glitch hack on ARM9</h2>
+    <img data-src="img/rom-situation-3.png" class="r-stretch" />
+    <p class="fragment"><b>Also not possible :(</b></p>
+
+    <aside class="notes" data-markdown>
+      TCM cleared on reset
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Time for more glitching</h2>
+    <img src="img/boot9dumptech-1.png" class="fragment current-visible" data-fragment-index="1" />
+    <img src="img/boot9dumptech-2.png" class="fragment current-visible" data-fragment-index="2" />
+    <img src="img/boot9dumptech-3.png" class="fragment current-visible" data-fragment-index="3" />
+
+    <aside class="notes" data-markdown>
+      * use vector glitch hack to take over ARM7
+      * in payload: pretend to be real bootrom
+      * "forget" to do bootrom lock
+      * ARM9 now in infinite loop
+      * 2nd glitch to get ARM9 out of loop
+      * booting continues, all the way to custom code
+      * custom code exfiltrates bootrom
+    </aside>
+  </section>
+  <section>
+    <h2>Another setup</h2>
+    <img data-src="img/vfi-stuckpixel.jpg" class="r-stretch" />
+    from stuckpixel and Normmatt
+
+    <aside class="notes" data-markdown>
+      * from stuckpixel
+      * voltage glitching using big MOSFET
+      * remove crystal &amp; supply own clock
+      * ^ sync helps with setup/hold-time violations
+      * iCE40 FPGA controls the setup
+    </aside>
+  </section>
+  <section>
+    <h2>In action</h2>
+    <img data-src="img/lacapture.png" />
+
+    <aside class="notes" data-markdown>
+      1. DSi starts
+      2. first glitch injected
+      3. stage1 (poisoned) happens
+      4. DSi ARM9 is now stuck
+      5. second glitch injected
+      6. things start happening again
+      7. read out bootrom!
+    </aside>
+  </section>
+</section>
+
+<section>
+  <h2>ARM9 ROM unlocked</h2>
+  <p>SHA3-256:</p>
+  <p class="monospace">cb886a6a02164ee8d4e1409d6e4c9bec 9736958e6e879f3ea7e44561ab667c6f</p>
+  <span></span><span></span>
+  <img data-src="img/ghidra.png" />
+</section>
+
+<section>
+  <h2>What now?</h2>
+  <p>Look for vulnerabilities!</p>
+  <ul>
+    <li>Does it have sighax?</li>
+    <li>Does it have ntrboot?</li>
+  </ul>
+</section>
+
+<section>
+  <section>
+    <h2>Boot medium selection</h2>
+    <ol>
+      <li>Magic key combo + lid closed? → <b>NDS Gamecart</b></li>
+      <li>Bit set in SPI boot configuration? → eMMC</li>
+      <li>Else (or eMMC fails) → SPI</li>
+    </ol>
+
+    <aside class="notes" data-markdown>
+      we have ntrboot! but can we use it?
+    </aside>
+  </section>
+  <section>
+    <h2>Boot procedure</h2>
+    <img src="img/bootfull-0.png" class="fragment current-visible" data-fragment-index="1" />
+    <img src="img/bootfull-1.png" class="fragment current-visible" data-fragment-index="2" />
+    <img src="img/bootfull-2.png" class="fragment current-visible" data-fragment-index="3" />
+
+    <aside class="notes" data-markdown>
+      address spaces with
+      * ARM9 DTCM, NWRAM
+      * ARM9 MPU
+      * ARM7 WRAM
+      * SPI flash &amp; eMMC
+    </aside>
+  </section>
+  <section>
+    <h2>Boot header &amp; signature format</h2>
+    <img data-src="img/rsachain.png" />
+
+    <aside class="notes" data-markdown>
+      * boot header: payload info, RSA sig
+      * sig: checks blobs &amp; headers
+      * also, decryption key for stage2
+    </aside>
+  </section>
+  <section>
+    <h2>Boot procedure</h2>
+    <img src="img/bootfull-3.png" class="fragment current-visible" data-fragment-index="1" />
+    <img src="img/bootfull-4.png" class="fragment current-visible" data-fragment-index="2" />
+
+    <aside class="notes" data-markdown>
+      two load options:
+       * decrypt, ARM7 loads to NWRAM, NWRAM bank reassigned to ARM9
+       * send thru FIFO to ARM9, ARM9 does decryption &amp; loads into its own NWRAM
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Signature format?</h2>
+    <img src="img/rsachain-good.png" />
+
+    <aside class="notes" data-markdown>
+       * signature: sign *hash* of data, not data directly
+       * normally, only one hash
+       * here: many!
+       * also: AES key: RSA key in ROM -&gt; derive AES key
+       * can't get AES key without ROM image!
+    </aside>
+  </section>
+  <section>
+    <img src="img/rsachain-bad.png" />
+
+    <aside class="notes" data-markdown>
+       * not a standard (eg PKCS#1)
+       * SHA1 and RSA-1024...
+    </aside>
+  </section>
+  <section>
+    <h2>No bug here :(</h2>
+    <p>⇒ no sighax :(</p>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Attacking SHA1</h2>
+    <p>"SHA1 is unsafe!"</p>
+    <p class="fragment">SHA1 <b>collision</b> attack known
+      <span class="secondary">Find x and y (x ≠ y) s.t. H(x) = H(y)</span>
+    </p>
+    <p class="fragment">... we need a <b>second preimage</b>
+      <span class="secondary">Given x: find y ≠ x s.t. H(x) = H(y)</span>
+    </p>
+  </section>
+  <section>
+    <h2>Attacking RSA-1024</h2>
+    <p>How to attack RSA:</p>
+    <img data-src="img/sieve.png" />
+  </section>
+  <section>
+    <h2>Lol, no</h2>
+    <p>This still takes too much processing power</p>
+    <p class="fragment">... but these public keys were generated in <b>2005</b>... maybe they made a mistake here?</p>
+    <img class="fragment" src="img/rsactftool.png" />
+
+    <aside class="notes" data-markdown>
+       many attacks on bad RSA key generation (eg ROCA)
+    </aside>
+  </section>
+  <section>
+    <h2>No dice</h2>
+    <p>NSA please help us &amp; factor these public keys</p>
+    <ul style="font-size:12px;" class="fragment monospace">
+      <li>GCD:  cc 98 7b 41 7d 9d 7c 80 02 85 db 10 99 8c d4 a7 86 7a ef da 43 a9 6d 0b 55 b0 10 73 67 99 c2 d9 f0 72 d6 fb 1d a6 17 9a 77 89 87 e7 e8 c8 c0 86 36 bf 5d 2c d7 5a 1f ea e0 4f 66 c7 83 a8 33 f4 93 73 9e 3a 97 70 52 5e 3d 9d 0e ed 50 4f d6 5f c4 36 71 91 c4 16 81 ca cf 92 4e ad 1c 32 70 dc 58 e5 89 89 a3 6a 09 43 90 f3 f1 8e 40 4f b7 f1 68 7f 30 f7 6d 00 8a 9c d4 87 25 4a 98 c9 66 2f</li>
+      <li>eMMC: f1 f5 1a ff 66 f9 b3 69 4d cb 78 de af 31 1b 78 3c 07 2a ac 94 30 11 11 4a 1c f6 fe 62 b0 91 b5 ef 0e ba 3a a9 ec 3e a0 1c 5d f6 66 65 3e 18 df 22 53 3b d5 e8 d6 ff 58 97 0b 24 e8 86 fa 87 8b 62 66 99 24 a8 fa 87 f2 74 00 4f ea 2f f6 23 e1 f2 90 7c a4 67 1f ca 28 3e 86 b6 ca c5 46 a7 9c 75 c8 0f eb 32 88 2c 3d 1d f7 d5 dc 1a 19 98 e9 f6 26 d4 fc 76 cb 23 13 58 cb 43 a9 b3 cb a3 c5</li>
+      <li>SPI:  b8 5f 0f db 26 2c 1a fc f8 6e 37 a7 cd d2 11 d4 55 20 3c a8 fb 10 6e de c7 03 6e d7 d6 36 3b 66 33 f4 d6 27 58 65 b6 32 b9 27 7a 74 ce 1d 41 db d9 6a 04 86 ee 72 71 b3 86 73 a0 3b 83 48 62 7b 22 a2 0b 77 38 dd 02 73 76 c4 f8 52 3d ea 5c 6f 5d f2 62 e4 5f 7a 90 1c 16 a1 8c ff 05 88 86 2e 1c 82 62 76 c8 ac 79 87 f0 a1 d5 7d 93 99 d5 cd 5d 48 55 4d 30 31 5d c1 b1 5a 32 45 11 f9 11 cb</li>
+      <li>e = 65537</li>
+    </ul>
+
+    <aside class="notes" data-markdown>
+       * I don't have the computational power to crack the RSA keys
+       * NSA probably does
+       * NSA can get lots of public goodwill by cracking the keys
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Code vulnerabilities</h2>
+     <ul>
+       <li>
+         Payload size and load address never checked
+         <ul class="fragment"><li>Caught by RSA signature</li></ul>
+       </li>
+     </ul>
+  </section>
+  <section>
+    <h2>RSA padding oops</h2>
+    <span><img data-src="img/vuln-padding-2.png" style="width:100%" /></span>
+    <span><img data-src="img/vuln-padding-1.png" style="width:100%" /></span>
+
+    <aside class="notes" data-markdown>
+       * RSA verification routine: check padding, copy out, return true/false
+       * calling code: don't check return value
+    </aside>
+  </section>
+  <section>
+    <span><img data-src="img/rsachain-hoh-good.png" class="r-stretch" /></span>
+
+    <aside class="notes" data-markdown>
+       * bad padding: not copied out → zero bytes
+       * "hash of hashes" catches all-zero sig appendix
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>What now?</h2>
+    <p>There's <b>almost</b> a bug here...</p>
+    <p class="fragment">So let's make one!</p>
+  </section>
+  <section>
+    <h2>Even more glitching</h2>
+    <span><img data-src="img/load-bearing-mov.png" class="r-stretch" /></span>
+
+    <aside class="notes" data-markdown>
+       * two hash checks → one statement
+       * glitch mov instruction → bypass both hash checks
+    </aside>
+  </section>
+  <section>
+    <h2>Two birds with one stone</h2>
+    <span><img src="img/rsachain-glitched.png" /></span>
+
+    <aside class="notes" data-markdown>
+       hash checks are:
+       * header check
+       * hash of hashes check
+
+       payload blob hash checks will still be done!
+       * need more for proper exploit
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Escalation</h2>
+    <img src="img/rsachain-glitched-2.png" class="fragment current-visible" data-fragment-index="1" />
+    <img src="img/a9takeover-1.png" class="fragment current-visible" data-fragment-index="2" />
+
+    <aside class="notes" data-markdown>
+       * header no longer checked for authenticity
+       * fake first payload info: use compression &amp; load to DTCM/stack
+       * MPU: stack is noexec!
+    </aside>
+  </section>
+  <section>
+    <h2>Baby's first ropchain</h2>
+    <img data-src="img/ropchain.png" />
+    <aside class="notes" data-markdown>
+       * MPU noexec: use ROP to take over ARM9
+       * just need to call memcpy() and done
+    </aside>
+  </section>
+  <section>
+    <h2>Escalation</h2>
+    <img src="img/a9takeover-2.png" class="fragment current-visible" data-fragment-index="1" />
+    <img src="img/a9takeover-3.png" class="fragment current-visible" data-fragment-index="2" />
+
+    <aside class="notes" data-markdown>
+       * use ROP to take over ARM9
+       * as ARM9: tell ARM7: "please load next binary"
+       * binary loaded into ARM7 stack (no compr)
+    </aside>
+  </section>
+  <section>
+    <ul class="check">
+      <li>ARM7 <b>and</b> ARM9 code execution</li>
+      <li class="fragment">Before boot ROM lockout</li>
+      <li class="fragment">With only one glitch</li>
+    </ul>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>That sounds nice in theory, but...</h2>
+    <p>how do we implement this in practice?</p>
+  </section>
+  <section>
+    <h2>Testing in melonDS</h2>
+    <img data-src="img/melonsploit.png" style="width:49%" />
+    <img data-src="img/gdbstub.png" style="width:30%" />
+    <p>Flip 1 bit in boot ROM binary → exploit works</p>
+
+    <aside class="notes" data-markdown>
+       * modify melonDS to boot from bootROMs
+       * prepare payload
+       * flip 1 bit in ROM (emulate glitching)
+       * GDB stub for debugging!
+    </aside>
+  </section>
+  <section>
+    <h2>Testing with lab setup</h2>
+    <img data-src="img/vfitestsetup.jpg" style="width:80%" />
+
+    <aside class="notes" data-markdown>
+       * once ready, test on real hardware
+       * worked flawlessly
+    </aside>
+  </section>
+</section>
+
+<section>
+  <section>
+    <h2>Development of a modchip</h2>
+    <ul>
+      <li>
+        What boot medium?
+        <ul>
+          <li class="fragment">Gamecart? Can't use FIFO+LZ needed for exploit</li>
+          <li class="fragment">eMMC? Annoying to reflash without other exploit</li>
+          <li class="fragment"><b>SPI</b>, which sits on the WiFi daughterboard</li>
+        </ul>
+      </li>
+      <li>
+        What glitching method?
+        <ul>
+          <li class="fragment">EMFI? Not practical</li>
+          <li class="fragment"><b>Voltage glitching</b></li>
+        </ul>
+      </li>
+      <li>
+        What form factor?
+        <ul>
+          <li class="fragment"><b>WiFi interposer/replacement</b></li>
+        </ul>
+      </li>
+      <!--<li>
+        What controller?
+        <ul>
+          <li class="fragment">FPGAs are expensive and energy-hungry</li>
+          <li class="fragment"><b>RP2040 (PicoFly, Starlink, ...)</li>
+        </ul>
+      </li>-->
+    </ul>
+
+    <aside class="notes" data-markdown>
+       accessible glitching: modchip!
+    </aside>
+  </section>
+  <section>
+    <h2>Design</h2>
+    <img data-src="img/mcrev21-kicad.png" style="width:70%" />
+    <br />
+    <img data-src="img/modchip-photo.jpg" style="width:70%" />
+  </section>
+  <section>
+    <h2>In action</h2>
+    <img data-src="img/mcrev21.jpg" style="width:80%" />
+  </section>
+  <section>
+    <h2>Demo time</h2>
+    <video>
+      <source data-src="img/37c3-demo.webm" type="video/webm" />
+    </video>
+    <aside class="notes" data-markdown>
+       EXPLAIN THE UART LOG!!!
+    </aside>
+  </section>
+</section>
+
+<section>
+  <h2>Recap</h2>
+  <ol>
+    <li class="fragment">Dump ARM7 ROM using vector glitch hack</li>
+    <li class="fragment">Dump ARM9 ROM using double glitch hack</li>
+    <li class="fragment">Find weak spot in ARM9 ROM against glitching attacks</li>
+    <li class="fragment">Develop new glitching exploit</li>
+    <li class="fragment">Make modchip for this exploit</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Conclusion</h2>
+  <ul>
+    <li class="fragment">DSi is better secured than 3DS
+      <img data-src="img/encr-thickening.png" />
+    </li>
+    <li class="fragment">Most of this was possible due to 3DS stage2 leak
+      <ul><li>"Secrets hidden in hardware are great, unless you leak them" -32c3</li></ul>
+    </li>
+  </ul>
+
+  <aside class="notes" data-markdown>
+     * DSi: custom cryptography, no OS
+     * 3DS: more standard cryptography, OS
+
+     3DS easier to hack?!
+
+     this presentation only possible thanks to 3DS data leak &amp; Unlaunch!
+  </aside>
+</section>
+
+<section>
+  <h2>Thanks</h2>
+  <ul>
+    <li><b>stuckpixel &amp; Normmatt</b></li>
+    <li><b>Arthur &amp; Lennert</b> for glitching help</li>
+    <li><b>nocash</b> for Unlaunch</li>
+    <li><b>Arisotura and contributors</b> for melonDS</li>
+    <li>#melonDS, #GodMode9, ReSwitched, ...</li>
+    <li><b>Nintendo</b> for the fun challenge</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Releases</h2>
+  <ul>
+    <li class="fragment">Glitching setups: <a href="https://gitlab.ulyssis.org/pcy/dsi-hacking-stuff">PoroCYon</a>, <a href="https://github.com/pixel-stuck/dsi_glitching">stuckpixel &amp; Normmatt</a></li>
+    <li class="fragment">melonDS patches: <b>already upstreamed!</b>
+      <ul><li class="fragment">People are already using this to <a href="https://farlow.dev/2023/03/02/hacking-the-nintendo-dsi-browser">find new exploits!</a></li></ul>
+    </li>
+    <li class="fragment">Documentation: <a href="https://dsibrew.org/">DSiBrew</a></li>
+    <li class="fragment"><a href="https://github.com/dsi-modchip/firmware">Modchip firmware</a></li>
+    <li class="fragment"><a href="https://github.com/dsi-modchip/payload">Exploit payload &amp; new initcode</a></li>
+    <li class="fragment">Modchip PCBs... later
+      <ul>
+        <li>Needs more bugfixing (can't fix hardware after fabrication!)</li>
+        <li class="fragment"><a href="https://github.com/dsi-modchip/guide">DIY guide with RP2040 devboard</a></li>
+    </li>
+  </ul>
+  <p class="fragment">Boot ROM dumps for all!</p>
+</section>
+
+<section>
+  <h2>TODO</h2>
+  Draw the rest of the owl:
+  <ul>
+    <li class="fragment" data-fragment-index="1">Modchip:
+      <ul>
+        <li>Auto parameter training</li>
+        <li>WiFi passthrough</li>
+        <li>DSi ↔ modchip communications</li>
+      </ul>
+    </li>
+    <li class="fragment" data-fragment-index="2">Payload:
+      <ul>
+        <li>Init all DSi hardware</li>
+        <li>SD card loader</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="fragment">All help is welcome!</p>
+
+  <aside class="notes" data-markdown>
+    * currently: glitching parameters are hardcoded
+      * this is bad: can change over time
+      * differs between units
+    * currently: no wifi :/
+    * currently: only shows a test screen
+      * init more hardware (DRAM, touchscreen, sound, GPU, ...)
+      * load &amp; run homebrew code from SD card
+  </aside>
+</section>
+
+<section>
+  <h1>Questions?</h1>
+</section>
+
+<section data-visibility="uncounted">
+  <h2>Image credits</h2>
+  <ul>
+    <li>Console photos: Evan Amos (PD)</li>
+    <li>Interconnect layers: David Carron (PD)</li>
+  </ul>
+</section>
+
+</div>
+</div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        hash: true,
+        width: 960,
+        height: 800,
+        totalTime: 45*60,
+        slideNumber: true,
+        //showNotes: 'separate-page',
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+      });
+    </script>
+  </body>
+</html>
